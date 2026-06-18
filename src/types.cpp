@@ -52,6 +52,16 @@ std::string appTypeToString(AppType type) {
         case AppType::DISCORD:    return "Discord";
         case AppType::GITHUB:     return "GitHub";
         case AppType::CLOUDFLARE: return "Cloudflare";
+        case AppType::OPENAI:       return "OpenAI (BLOCKED)";
+        case AppType::ANTHROPIC:    return "Anthropic Claude (BLOCKED)";
+        case AppType::CLUELY:       return "Cluely AI (BLOCKED)";
+        case AppType::PARAKEET:     return "Parakeet AI (BLOCKED)";
+        case AppType::GEMINI:       return "Google Gemini (BLOCKED)";
+        case AppType::COPILOT:      return "GitHub Copilot (BLOCKED)";
+        case AppType::PERPLEXITY:   return "Perplexity AI (BLOCKED)";
+        case AppType::ANYDESK:      return "AnyDesk (BLOCKED)";
+        case AppType::TEAMVIEWER:   return "TeamViewer (BLOCKED)";
+        case AppType::EXAM_ALLOWED: return "Exam Platform (ALLOWED)";
         default:                  return "Unknown";
     }
 }
