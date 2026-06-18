@@ -3,6 +3,7 @@
 #include <sstream>
 #include <vector>
 #include "dpi_engine.h"
+#include "exam_mode.h"
 
 using namespace DPI;
 
@@ -33,6 +34,8 @@ Examples:
   )" << program << R"( capture.pcap filtered.pcap --block-app YouTube
   )" << program << R"( capture.pcap filtered.pcap --block-ip 192.168.1.50 --block-domain *.tiktok.com
   )" << program << R"( capture.pcap filtered.pcap --rules blocking_rules.txt
+  )" << program << R"( capture.pcap filtered.pcap --exam-mode
+  )" << program << R"( capture.pcap filtered.pcap --exam-mode --allow hackerrank.com --exam-name "TCS 2026"
 
 Supported Apps for Blocking:
   Google, YouTube, Facebook, Instagram, Twitter/X, Netflix, Amazon,
@@ -108,12 +111,53 @@ int main(int argc, char* argv[]) {
             config.fps_per_lb = std::stoi(argv[++i]);
         } else if (arg == "--verbose") {
             config.verbose = true;
-        } else if (arg == "--help" || arg == "-h") {
+        } 
+        else if (arg == "--help" || arg == "-h") {
             printUsage(argv[0]);
             return 0;
+        } else if (arg == "--exam-mode") {
+            // handled below
+        } else if (arg == "--allow" && i + 1 < argc) {
+            // handled below
+        } else if (arg == "--exam-name" && i + 1 < argc) {
+            // handled below
         }
     }
     
+    
+   // ── Exam Mode Setup ──────────────────────────────
+    DPI::ExamModeEngine examEngine;
+    std::string exam_allowed_domain = "";
+    std::string exam_name = "Placement Exam 2026";
+    bool exam_active = false;
+    DPI::ExamMode exam_mode_type = DPI::ExamMode::BLOCKLIST;
+
+    for (int i = 3; i < argc; i++) {
+        std::string arg = argv[i];
+        if (arg == "--exam-mode") {
+            exam_active = true;
+        } else if (arg == "--allow" && i + 1 < argc) {
+            exam_allowed_domain = argv[++i];
+            exam_mode_type = DPI::ExamMode::WHITELIST;
+        } else if (arg == "--exam-name" && i + 1 < argc) {
+            exam_name = argv[++i];
+        }
+    }
+
+    if (exam_active) {
+        examEngine.enable(exam_mode_type, exam_allowed_domain, exam_name);
+        // Auto-block all known AI tools
+        block_apps.push_back("OpenAI");
+        block_apps.push_back("Anthropic");
+        block_apps.push_back("Cluely");
+        block_apps.push_back("Parakeet");
+        block_apps.push_back("Gemini");
+        block_apps.push_back("Copilot");
+        block_apps.push_back("Perplexity");
+        block_apps.push_back("AnyDesk");
+        block_apps.push_back("TeamViewer");
+    }
+
     // Create DPI engine
     DPIEngine engine(config);
     
