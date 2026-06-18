@@ -198,6 +198,42 @@ AppType sniToAppType(const std::string& sni) {
         lower_sni.find("cf-") != std::string::npos) {
         return AppType::CLOUDFLARE;
     }
+    // ── AI Cheating Tools ──
+    if (lower_sni.find("openai") != std::string::npos ||
+        lower_sni.find("api.openai") != std::string::npos ||
+        lower_sni.find("chatgpt") != std::string::npos ||
+        lower_sni.find("oaistatic") != std::string::npos) {
+        return AppType::OPENAI;
+    }
+    if (lower_sni.find("anthropic") != std::string::npos ||
+        lower_sni.find("claude.ai") != std::string::npos) {
+        return AppType::ANTHROPIC;
+    }
+    if (lower_sni.find("cluely") != std::string::npos) {
+        return AppType::CLUELY;
+    }
+    if (lower_sni.find("parakeet") != std::string::npos ||
+        lower_sni.find("parakeetai") != std::string::npos) {
+        return AppType::PARAKEET;
+    }
+    if (lower_sni.find("gemini") != std::string::npos ||
+        lower_sni.find("generativelanguage.googleapis") != std::string::npos) {
+        return AppType::GEMINI;
+    }
+    if (lower_sni.find("copilot") != std::string::npos ||
+        lower_sni.find("githubcopilot") != std::string::npos) {
+        return AppType::COPILOT;
+    }
+    if (lower_sni.find("perplexity") != std::string::npos) {
+        return AppType::PERPLEXITY;
+    }
+    // ── Remote Access Tools ──
+    if (lower_sni.find("anydesk") != std::string::npos) {
+        return AppType::ANYDESK;
+    }
+    if (lower_sni.find("teamviewer") != std::string::npos) {
+        return AppType::TEAMVIEWER;
+    }
     
     // If SNI is present but not recognized, still mark as TLS/HTTPS
     return AppType::HTTPS;
