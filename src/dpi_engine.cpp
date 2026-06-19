@@ -297,11 +297,43 @@ void DPIEngine::outputThreadFunc() {
 void DPIEngine::handleOutput(const PacketJob& job, PacketAction action) {
     if (action == PacketAction::DROP) {
         stats_.dropped_packets++;
-        return;
+    } else {
+        stats_.forwarded_packets++;
+        output_queue_.push(job);
     }
     
-    stats_.forwarded_packets++;
-    output_queue_.push(job);
+    // Look up the connection to get domain/app information for report logging
+    Connection* conn = nullptr;
+    for (int i = 0; i < config_.num_load_balancers * config_.fps_per_lb; i++) {
+        conn = fp_manager_->getFP(i).getConnectionTracker().getConnection(job.tuple);
+        if (conn) break;
+    }
+    
+    if (conn) {
+        bool should_log = false;
+        std::string action_str;
+        
+        if (action == PacketAction::DROP) {
+            if (!conn->event_logged) {
+                should_log = true;
+                action_str = "BLOCKED";
+                conn->event_logged = true;
+            }
+        } else if (conn->state == ConnectionState::CLASSIFIED || !conn->sni.empty()) {
+            if (!conn->event_logged) {
+                should_log = true;
+                action_str = "ALLOWED";
+                conn->event_logged = true;
+            }
+        }
+        
+        if (should_log) {
+            std::lock_guard<std::mutex> lock(output_mutex_);
+            std::string candidate_ip = PacketAnalyzer::PacketParser::ipToString(job.tuple.src_ip);
+            std::string domain = !conn->sni.empty() ? conn->sni : PacketAnalyzer::PacketParser::ipToString(job.tuple.dst_ip);
+            report_generator_.addEvent(candidate_ip, domain, conn->app_type, action_str, job.ts_sec);
+        }
+    }
 }
 
 bool DPIEngine::writeOutputHeader(const PacketAnalyzer::PcapGlobalHeader& header) {
@@ -493,6 +525,12 @@ void DPIEngine::printStatus() const {
         auto fp_stats = fp_manager_->getAggregatedStats();
         std::cout << "Connections: " << fp_stats.total_connections << "\n";
     }
+}
+
+void DPIEngine::exportReports(const std::string& base_filename) const {
+    report_generator_.printSummary();
+    report_generator_.exportJSON(base_filename + "_report.json", exam_name_);
+    report_generator_.exportCSV(base_filename + "_report.csv");
 }
 
 } // namespace DPI

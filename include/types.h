@@ -154,6 +154,7 @@ struct Connection {
     bool syn_seen = false;
     bool syn_ack_seen = false;
     bool fin_seen = false;
+    bool event_logged = false;
 };
 
 // ============================================================================

@@ -8,6 +8,7 @@
 #include "fast_path.h"
 #include "rule_manager.h"
 #include "connection_tracker.h"
+#include "report_generator.h"
 #include <memory>
 #include <thread>
 #include <atomic>
@@ -129,6 +130,9 @@ public:
     RuleManager& getRuleManager() { return *rule_manager_; }
     const Config& getConfig() const { return config_; }
     bool isRunning() const { return running_; }
+    
+    void setExamName(const std::string& name) { exam_name_ = name; }
+    void exportReports(const std::string& base_filename) const;
 
 private:
     Config config_;
@@ -153,6 +157,9 @@ private:
     // Control
     std::atomic<bool> running_{false};
     std::atomic<bool> processing_complete_{false};
+    
+    ReportGenerator report_generator_;
+    std::string exam_name_ = "Placement Exam 2026";
     
     // Reader thread (separate for PCAP input)
     std::thread reader_thread_;

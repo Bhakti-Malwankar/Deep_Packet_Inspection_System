@@ -152,6 +152,7 @@ int main(int argc, char* argv[]) {
 
     // Create DPI engine
     DPIEngine engine(config);
+    engine.setExamName(exam_name);
     
     // Initialize
     if (!engine.initialize()) {
@@ -185,6 +186,14 @@ int main(int argc, char* argv[]) {
     
     std::cout << "\nProcessing complete!\n";
     std::cout << "Output written to: " << output_file << "\n";
+
+    // Export audit reports
+    if (exam_active) {
+        engine.exportReports("exam_audit");
+        std::cout << "\nAudit files saved:\n";
+        std::cout << "  exam_audit_report.json\n";
+        std::cout << "  exam_audit_report.csv\n";
+    }
     
     return 0;
 }
