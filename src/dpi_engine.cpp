@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <chrono>
 #include <cstring>
+#include <algorithm>
 
 namespace DPI {
 
@@ -351,8 +352,18 @@ void DPIEngine::blockApp(AppType app) {
 }
 
 void DPIEngine::blockApp(const std::string& app_name) {
+    std::string lower_search = app_name;
+    std::transform(lower_search.begin(), lower_search.end(), 
+                   lower_search.begin(),
+                   [](unsigned char c){ return std::tolower(c); });
+
     for (int i = 0; i < static_cast<int>(AppType::APP_COUNT); i++) {
-        if (appTypeToString(static_cast<AppType>(i)) == app_name) {
+        std::string app_str = appTypeToString(static_cast<AppType>(i));
+        std::string lower_app = app_str;
+        std::transform(lower_app.begin(), lower_app.end(), 
+                       lower_app.begin(),
+                       [](unsigned char c){ return std::tolower(c); });
+        if (lower_app.find(lower_search) != std::string::npos) {
             blockApp(static_cast<AppType>(i));
             return;
         }

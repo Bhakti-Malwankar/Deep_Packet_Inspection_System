@@ -79,7 +79,6 @@ enum class AppType {
     DISCORD,
     GITHUB,
     CLOUDFLARE,
-    // Add more as needed
     // AI Cheating Tools
     OPENAI,
     ANTHROPIC,
@@ -88,12 +87,24 @@ enum class AppType {
     GEMINI,
     COPILOT,
     PERPLEXITY,
-    // Remote Access / Screen Share
+    // Remote Access
     ANYDESK,
     TEAMVIEWER,
-    // Exam allowed
+    // Exam
     EXAM_ALLOWED,
     APP_COUNT  // Keep this last for counting
+};
+
+enum class ExamMode {
+    OFF,
+    WHITELIST,
+    BLOCKLIST
+};
+
+struct ExamConfig {
+    ExamMode mode = ExamMode::OFF;
+    std::string allowed_domain = "";
+    std::string exam_name = "";
 };
 
 std::string appTypeToString(AppType type);
@@ -102,18 +113,6 @@ AppType sniToAppType(const std::string& sni);
 // ============================================================================
 // Connection State
 // ============================================================================
-// ── Exam Mode ──────────────────────────────────────────
-enum class ExamMode {
-    OFF,        // Normal mode, no exam restrictions
-    WHITELIST,  // Only allow exam domains, block everything else
-    BLOCKLIST   // Block known AI/cheating tools only
-};
-
-struct ExamConfig {
-    ExamMode mode = ExamMode::OFF;
-    std::string allowed_domain = "";  // e.g. "hackerrank.com"
-    std::string exam_name = "";       // e.g. "TCS Placement 2026"
-};
 enum class ConnectionState {
     NEW,
     ESTABLISHED,

@@ -27,7 +27,8 @@ class ExamModeEngine {
 public:
     ExamConfig config;
 
-    void enable(ExamMode mode, const std::string& allowed_domain, const std::string& exam_name) {
+    void enable(ExamMode mode, const std::string& allowed_domain, 
+                const std::string& exam_name) {
         config.mode = mode;
         config.allowed_domain = allowed_domain;
         config.exam_name = exam_name;
@@ -36,7 +37,8 @@ public:
             std::cout << "[EXAM MODE] Only allowing: " << allowed_domain << "\n";
             std::cout << "[EXAM MODE] ALL other domains will be BLOCKED\n\n";
         } else if (mode == ExamMode::BLOCKLIST) {
-            std::cout << "[EXAM MODE] Blocking all AI tools: Cluely, Parakeet, OpenAI, Anthropic...\n\n";
+            std::cout << "[EXAM MODE] Blocking: Cluely, Parakeet, OpenAI, "
+                         "Anthropic, Gemini, Copilot, AnyDesk, TeamViewer\n\n";
         }
     }
 
@@ -55,7 +57,8 @@ public:
         return false;
     }
 
-    void logBlock(const std::string& sni, AppType app, const std::string& src_ip) const {
+    void logBlock(const std::string& sni, AppType app, 
+                  const std::string& src_ip) const {
         std::cout << "[EXAM BLOCK] Candidate " << src_ip
                   << " tried to access: " << sni
                   << " (" << appTypeToString(app) << ")\n";

@@ -115,17 +115,10 @@ int main(int argc, char* argv[]) {
         else if (arg == "--help" || arg == "-h") {
             printUsage(argv[0]);
             return 0;
-        } else if (arg == "--exam-mode") {
-            // handled below
-        } else if (arg == "--allow" && i + 1 < argc) {
-            // handled below
-        } else if (arg == "--exam-name" && i + 1 < argc) {
-            // handled below
         }
     }
-    
-    
-   // ── Exam Mode Setup ──────────────────────────────
+
+    // ── Exam Mode Setup ──────────────────────────────
     DPI::ExamModeEngine examEngine;
     std::string exam_allowed_domain = "";
     std::string exam_name = "Placement Exam 2026";
@@ -146,7 +139,6 @@ int main(int argc, char* argv[]) {
 
     if (exam_active) {
         examEngine.enable(exam_mode_type, exam_allowed_domain, exam_name);
-        // Auto-block all known AI tools
         block_apps.push_back("OpenAI");
         block_apps.push_back("Anthropic");
         block_apps.push_back("Cluely");
