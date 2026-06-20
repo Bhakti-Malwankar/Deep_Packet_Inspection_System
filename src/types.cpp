@@ -66,6 +66,16 @@ std::string appTypeToString(AppType type) {
     }
 }
 
+// Checks if domain ends with or contains the target as a proper 
+// subdomain/domain segment (preceded by '.' or at string start)
+static bool matchesDomain(const std::string& sni, const std::string& target) {
+    size_t pos = sni.find(target);
+    if (pos == std::string::npos) return false;
+    // Must be at start of string OR preceded by a '.'
+    if (pos != 0 && sni[pos - 1] != '.') return false;
+    return true;
+}
+
 // Map SNI/domain to application type
 AppType sniToAppType(const std::string& sni) {
     if (sni.empty()) return AppType::UNKNOWN;
@@ -117,8 +127,8 @@ AppType sniToAppType(const std::string& sni) {
     // Twitter/X
     if (lower_sni.find("twitter") != std::string::npos ||
         lower_sni.find("twimg") != std::string::npos ||
-        lower_sni.find("x.com") != std::string::npos ||
-        lower_sni.find("t.co") != std::string::npos) {
+        matchesDomain(lower_sni, "x.com") ||
+        matchesDomain(lower_sni, "t.co")) {
         return AppType::TWITTER;
     }
     
