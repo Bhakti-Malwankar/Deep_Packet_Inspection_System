@@ -1,5 +1,8 @@
 #include <iostream>
 #include <string>
+#ifdef _WIN32
+#include <windows.h>
+#endif
 #include <sstream>
 #include <vector>
 #include "dpi_engine.h"
@@ -76,6 +79,10 @@ std::vector<std::string> split(const std::string& s) {
 }
 
 int main(int argc, char* argv[]) {
+#ifdef _WIN32
+    SetConsoleOutputCP(CP_UTF8);
+    setvbuf(stdout, nullptr, _IONBF, 0);
+#endif
     if (argc < 3) {
         printUsage(argv[0]);
         return 1;
@@ -190,6 +197,7 @@ int main(int argc, char* argv[]) {
     // Export audit reports
     if (exam_active) {
         engine.exportReports("exam_audit");
+        engine.printDetailedCandidateReport();
         std::cout << "\nAudit files saved:\n";
         std::cout << "  exam_audit_report.json\n";
         std::cout << "  exam_audit_report.csv\n";

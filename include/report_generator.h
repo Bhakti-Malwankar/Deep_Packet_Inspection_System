@@ -48,6 +48,15 @@ public:
     // Print summary to console
     void printSummary() const;
 
+    // Print detailed per-candidate breakdown table
+    void printDetailedCandidateReport() const;
+
+    // Get all events for a specific candidate IP
+    std::vector<BlockedEvent> getEventsForCandidate(const std::string& ip) const;
+
+    // Get list of all unique candidate IPs seen
+    std::vector<std::string> getAllCandidateIPs() const;
+
     int getTotalEvents() const { return events_.size(); }
     int getTotalBlocked() const;
 

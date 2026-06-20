@@ -133,6 +133,9 @@ public:
     
     void setExamName(const std::string& name) { exam_name_ = name; }
     void exportReports(const std::string& base_filename) const;
+    void printDetailedCandidateReport() const { 
+        report_generator_.printDetailedCandidateReport(); 
+    }
 
 private:
     Config config_;
